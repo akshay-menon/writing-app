@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { saveEntry } from "@/lib/entries/actions";
+import { CoachPanel } from "@/components/CoachPanel";
 import type { Prompt, EntryType } from "@/types/database";
 
 interface WriteContentProps {
@@ -52,9 +53,13 @@ export function WriteContent({ prompt }: WriteContentProps) {
     );
   }
 
+  // Generate a session key for coach chat persistence
+  const sessionKey = prompt?.id || `${type}-${new Date().toISOString().split("T")[0]}`;
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
         <Link
           href="/"
           className="text-sm text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200"
@@ -114,6 +119,14 @@ export function WriteContent({ prompt }: WriteContentProps) {
           {isPending ? "Saving..." : "Save Entry"}
         </button>
       </div>
-    </div>
+      </div>
+
+      <CoachPanel
+        promptText={prompt?.prompt_text || "No prompt available"}
+        currentWriting={content}
+        entryType={type}
+        sessionKey={sessionKey}
+      />
+    </>
   );
 }
