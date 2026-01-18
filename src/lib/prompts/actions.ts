@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { generateDailyPrompt, generateFictionPrompt } from "./generate";
 import { formatDateForDB, getCurrentWeekSaturday, getTodayDate } from "@/lib/dates";
-import type { Prompt } from "@/types/database";
+import type { Prompt, PromptInsert } from "@/types/database";
 
 export async function getDailyPrompt(): Promise<Prompt | null> {
   const supabase = await createClient();
@@ -38,14 +38,16 @@ export async function getDailyPrompt(): Promise<Prompt | null> {
   try {
     const promptText = await generateDailyPrompt();
 
+    const insertData: PromptInsert = {
+      user_id: user.id,
+      prompt_text: promptText,
+      prompt_type: "daily",
+      generated_date: today,
+    };
+
     const { data: newPrompt, error } = await supabase
       .from("prompts")
-      .insert({
-        user_id: user.id,
-        prompt_text: promptText,
-        prompt_type: "daily",
-        generated_date: today,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -105,14 +107,16 @@ export async function getWeeklyFictionPrompt(): Promise<Prompt | null> {
   try {
     const promptText = await generateFictionPrompt();
 
+    const insertData: PromptInsert = {
+      user_id: user.id,
+      prompt_text: promptText,
+      prompt_type: "fiction",
+      generated_date: saturday,
+    };
+
     const { data: newPrompt, error } = await supabase
       .from("prompts")
-      .insert({
-        user_id: user.id,
-        prompt_text: promptText,
-        prompt_type: "fiction",
-        generated_date: saturday,
-      })
+      .insert(insertData)
       .select()
       .single();
 

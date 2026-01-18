@@ -28,6 +28,7 @@ export interface Database {
           email?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       prompts: {
         Row: {
@@ -54,6 +55,7 @@ export interface Database {
           generated_date?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       entries: {
         Row: {
@@ -83,6 +85,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: {
@@ -95,6 +98,9 @@ export interface Database {
       prompt_type: PromptType;
       entry_type: EntryType;
     };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
 }
 
@@ -102,3 +108,11 @@ export interface Database {
 export type User = Database["public"]["Tables"]["users"]["Row"];
 export type Prompt = Database["public"]["Tables"]["prompts"]["Row"];
 export type Entry = Database["public"]["Tables"]["entries"]["Row"];
+
+// Insert types
+export type UserInsert = Database["public"]["Tables"]["users"]["Insert"];
+export type PromptInsert = Database["public"]["Tables"]["prompts"]["Insert"];
+export type EntryInsert = Database["public"]["Tables"]["entries"]["Insert"];
+
+// Update types
+export type EntryUpdate = Database["public"]["Tables"]["entries"]["Update"];

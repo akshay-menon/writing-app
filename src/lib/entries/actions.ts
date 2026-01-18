@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { Entry, EntryType } from "@/types/database";
+import type { Entry, EntryType, EntryInsert, EntryUpdate } from "@/types/database";
 
 export async function saveEntry(
   entryText: string,
@@ -19,14 +19,16 @@ export async function saveEntry(
     return { entry: null, error: "Not authenticated" };
   }
 
+  const insertData: EntryInsert = {
+    user_id: user.id,
+    entry_text: entryText,
+    entry_type: entryType,
+    prompt_id: promptId || null,
+  };
+
   const { data: entry, error } = await supabase
     .from("entries")
-    .insert({
-      user_id: user.id,
-      entry_text: entryText,
-      entry_type: entryType,
-      prompt_id: promptId || null,
-    })
+    .insert(insertData)
     .select()
     .single();
 
@@ -55,9 +57,11 @@ export async function updateEntry(
     return { entry: null, error: "Not authenticated" };
   }
 
+  const updateData: EntryUpdate = { entry_text: entryText };
+
   const { data: entry, error } = await supabase
     .from("entries")
-    .update({ entry_text: entryText })
+    .update(updateData)
     .eq("id", entryId)
     .eq("user_id", user.id)
     .select()
