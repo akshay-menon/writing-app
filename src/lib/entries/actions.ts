@@ -28,7 +28,7 @@ export async function saveEntry(
 
   const { data: entry, error } = await supabase
     .from("entries")
-    .insert(insertData)
+    .insert(insertData as never)
     .select()
     .single();
 
@@ -61,7 +61,7 @@ export async function updateEntry(
 
   const { data: entry, error } = await supabase
     .from("entries")
-    .update(updateData)
+    .update(updateData as never)
     .eq("id", entryId)
     .eq("user_id", user.id)
     .select()

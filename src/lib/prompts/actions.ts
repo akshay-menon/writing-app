@@ -47,7 +47,7 @@ export async function getDailyPrompt(): Promise<Prompt | null> {
 
     const { data: newPrompt, error } = await supabase
       .from("prompts")
-      .insert(insertData)
+      .insert(insertData as never)
       .select()
       .single();
 
@@ -116,7 +116,7 @@ export async function getWeeklyFictionPrompt(): Promise<Prompt | null> {
 
     const { data: newPrompt, error } = await supabase
       .from("prompts")
-      .insert(insertData)
+      .insert(insertData as never)
       .select()
       .single();
 
