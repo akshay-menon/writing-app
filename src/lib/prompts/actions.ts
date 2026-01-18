@@ -20,13 +20,13 @@ export async function getDailyPrompt(): Promise<Prompt | null> {
   console.log(`[Daily Prompt] Checking for existing prompt for user ${user.id} on ${today}`);
 
   // Check if prompt exists for today
-  const { data: existingPrompt, error: fetchError } = await supabase
+  const { data: existingPrompt, error: fetchError } = (await supabase
     .from("prompts")
     .select("*")
     .eq("user_id", user.id)
     .eq("prompt_type", "daily")
     .eq("generated_date", today)
-    .maybeSingle();
+    .maybeSingle()) as { data: Prompt | null; error: { message?: string } | null };
 
   if (fetchError) {
     console.error("Error fetching daily prompt:", fetchError);
@@ -50,30 +50,30 @@ export async function getDailyPrompt(): Promise<Prompt | null> {
       generated_date: today,
     };
 
-    const { data: newPrompt, error } = await supabase
+    const { data: newPrompt, error } = (await supabase
       .from("prompts")
       .insert(insertData as never)
       .select()
-      .single();
+      .single()) as { data: Prompt | null; error: { code?: string; message?: string } | null };
 
     if (error) {
       // If duplicate key error, try to fetch the existing prompt
       if (error.code === "23505") {
         console.log(`[Daily Prompt] Race condition detected, fetching existing prompt`);
-        const { data: refetchedPrompt } = await supabase
+        const { data: refetchedPrompt } = (await supabase
           .from("prompts")
           .select("*")
           .eq("user_id", user.id)
           .eq("prompt_type", "daily")
           .eq("generated_date", today)
-          .maybeSingle();
+          .maybeSingle()) as { data: Prompt | null };
         return refetchedPrompt;
       }
       console.error("Error saving daily prompt:", error);
       return null;
     }
 
-    console.log(`[Daily Prompt] Generated and saved new prompt (ID: ${newPrompt.id})`);
+    console.log(`[Daily Prompt] Generated and saved new prompt (ID: ${newPrompt?.id})`);
     return newPrompt;
   } catch (err) {
     console.error("Error generating daily prompt:", err);
@@ -96,13 +96,13 @@ export async function getWeeklyFictionPrompt(): Promise<Prompt | null> {
   console.log(`[Weekly Prompt] Checking for existing prompt for user ${user.id} for week of ${saturday}`);
 
   // Check if prompt exists for this week (keyed by Saturday date)
-  const { data: existingPrompt, error: fetchError } = await supabase
+  const { data: existingPrompt, error: fetchError } = (await supabase
     .from("prompts")
     .select("*")
     .eq("user_id", user.id)
     .eq("prompt_type", "fiction")
     .eq("generated_date", saturday)
-    .maybeSingle();
+    .maybeSingle()) as { data: Prompt | null; error: { message?: string } | null };
 
   if (fetchError) {
     console.error("Error fetching fiction prompt:", fetchError);
@@ -126,30 +126,30 @@ export async function getWeeklyFictionPrompt(): Promise<Prompt | null> {
       generated_date: saturday,
     };
 
-    const { data: newPrompt, error } = await supabase
+    const { data: newPrompt, error } = (await supabase
       .from("prompts")
       .insert(insertData as never)
       .select()
-      .single();
+      .single()) as { data: Prompt | null; error: { code?: string; message?: string } | null };
 
     if (error) {
       // If duplicate key error, try to fetch the existing prompt
       if (error.code === "23505") {
         console.log(`[Weekly Prompt] Race condition detected, fetching existing prompt`);
-        const { data: refetchedPrompt } = await supabase
+        const { data: refetchedPrompt } = (await supabase
           .from("prompts")
           .select("*")
           .eq("user_id", user.id)
           .eq("prompt_type", "fiction")
           .eq("generated_date", saturday)
-          .maybeSingle();
+          .maybeSingle()) as { data: Prompt | null };
         return refetchedPrompt;
       }
       console.error("Error saving fiction prompt:", error);
       return null;
     }
 
-    console.log(`[Weekly Prompt] Generated and saved new prompt (ID: ${newPrompt.id})`);
+    console.log(`[Weekly Prompt] Generated and saved new prompt (ID: ${newPrompt?.id})`);
     return newPrompt;
   } catch (err) {
     console.error("Error generating fiction prompt:", err);
@@ -160,11 +160,11 @@ export async function getWeeklyFictionPrompt(): Promise<Prompt | null> {
 export async function getPromptById(promptId: string): Promise<Prompt | null> {
   const supabase = await createClient();
 
-  const { data: prompt } = await supabase
+  const { data: prompt } = (await supabase
     .from("prompts")
     .select("*")
     .eq("id", promptId)
-    .maybeSingle();
+    .maybeSingle()) as { data: Prompt | null };
 
   return prompt;
 }
