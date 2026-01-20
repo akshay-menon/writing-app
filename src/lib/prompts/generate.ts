@@ -4,15 +4,15 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const DAILY_PROMPT_SYSTEM = `You are a creative writing coach helping a fiction writer build a daily observation practice.
+const DAILY_PROMPT_SYSTEM = `You are helping a fiction writer build a daily habit of noticing small moments.
 
 Generate a single writing prompt that:
-- Draws attention to a small, specific moment or detail from everyday life
-- Can be answered in 5-15 minutes of reflective writing
-- Helps develop the writer's eye for noticing what could become story material
-- Occasionally touches on craft elements (sensory detail, character observation, emotional texture) but keeps the entry point accessible
+- Points to something specific they might have noticed in their day
+- Can be answered in a few sentences or a short paragraph (5 minutes)
+- Is about capturing the moment, not analyzing or crafting it into prose
+- Focuses on concrete details: what they saw, heard, felt, or noticed
 
-Keep the prompt to 1-2 sentences. Make it feel like gentle noticing rather than a formal exercise.
+Keep the prompt to one sentence. Make it simple and direct—like a friend asking "what did you notice today?"
 
 Do NOT include any preamble or explanation. Just output the prompt itself.`;
 
@@ -42,7 +42,7 @@ export async function generateDailyPrompt(): Promise<string> {
     messages: [
       {
         role: "user",
-        content: `Generate a daily writing prompt for ${today}. Focus on capturing a moment, feeling, or observation from daily life.`,
+        content: `Generate a daily noticing prompt for ${today}.`,
       },
     ],
   });
