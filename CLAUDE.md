@@ -49,3 +49,8 @@ src/
 3. **Coach** (side panel) - AI asks reflective questions during writing
 4. **Archive** (`/archive`) - View, filter, edit, delete, export entries
 5. **Patterns** (`/patterns`) - AI analyzes themes, characters, style, story threads
+
+## Prompt Philosophy
+- **Daily prompts**: Quick 5-minute noticing exercises focused on concrete details (what you saw, heard, felt). Simple and direct, not craft-focused.
+- **Weekly fiction prompts**: Longer-form story starters generated on Saturdays.
+- Prompts are cached by date in Supabase. To force regenerate, delete the row from the `prompts` table.
