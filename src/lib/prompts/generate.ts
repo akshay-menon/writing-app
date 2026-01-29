@@ -12,6 +12,19 @@ Generate a single writing prompt that:
 - Is about capturing the moment, not analyzing or crafting it into prose
 - Focuses on concrete details: what they saw, heard, felt, or noticed
 
+IMPORTANT: Vary the sensory focus and subject matter. Draw from a wide range of topics:
+- Sounds (conversations overheard, ambient noise, silence, music)
+- Textures and touch (surfaces, temperature, physical sensations)
+- Smells and tastes
+- Movement and rhythm (how people walk, traffic patterns, your own body)
+- Spaces and architecture (rooms, doorways, corners, ceilings)
+- People (strangers, expressions, gestures, clothing details)
+- Objects (everyday items, things out of place, tools being used)
+- Time (moments of waiting, transitions, before/after states)
+- Weather beyond just light (wind, humidity, rain, cold)
+
+Avoid repeating topics from recent prompts if provided.
+
 Keep the prompt to one sentence. Make it simple and direct—like a friend asking "what did you notice today?"
 
 Do NOT include any preamble or explanation. Just output the prompt itself.`;
@@ -28,12 +41,18 @@ Keep the prompt to 2-4 sentences. Create something that excites the imagination.
 
 Do NOT include any preamble or explanation. Just output the prompt itself.`;
 
-export async function generateDailyPrompt(): Promise<string> {
+export async function generateDailyPrompt(recentPrompts?: string[]): Promise<string> {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
+
+  let userMessage = `Generate a daily noticing prompt for ${today}.`;
+
+  if (recentPrompts && recentPrompts.length > 0) {
+    userMessage += `\n\nHere are the prompts from recent days—generate something that explores a DIFFERENT topic or sensory focus:\n${recentPrompts.map((p, i) => `${i + 1}. ${p}`).join("\n")}`;
+  }
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
@@ -42,7 +61,7 @@ export async function generateDailyPrompt(): Promise<string> {
     messages: [
       {
         role: "user",
-        content: `Generate a daily noticing prompt for ${today}.`,
+        content: userMessage,
       },
     ],
   });

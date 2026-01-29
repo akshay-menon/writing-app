@@ -39,9 +39,25 @@ export async function getDailyPrompt(): Promise<Prompt | null> {
 
   console.log(`[Daily Prompt] No existing prompt found, generating new one...`);
 
+  // Fetch recent prompts to avoid repetition (last 14 days)
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+  const twoWeeksAgoStr = formatDateForDB(twoWeeksAgo);
+
+  const { data: recentPrompts } = (await supabase
+    .from("prompts")
+    .select("prompt_text")
+    .eq("user_id", user.id)
+    .eq("prompt_type", "daily")
+    .gte("generated_date", twoWeeksAgoStr)
+    .order("generated_date", { ascending: false })) as { data: { prompt_text: string }[] | null };
+
+  const recentPromptTexts = recentPrompts?.map((p) => p.prompt_text) ?? [];
+  console.log(`[Daily Prompt] Found ${recentPromptTexts.length} recent prompts to avoid`);
+
   // Generate new prompt
   try {
-    const promptText = await generateDailyPrompt();
+    const promptText = await generateDailyPrompt(recentPromptTexts);
 
     const insertData: PromptInsert = {
       user_id: user.id,
