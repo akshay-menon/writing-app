@@ -54,3 +54,4 @@ src/
 - **Daily prompts**: Quick 5-minute noticing exercises focused on concrete details (what you saw, heard, felt). Simple and direct, not craft-focused.
 - **Weekly fiction prompts**: Longer-form story starters generated on Saturdays.
 - Prompts are cached by date in Supabase. To force regenerate, delete the row from the `prompts` table.
+- **Variety mechanism**: When generating a new daily prompt, the system fetches the last 14 days of prompts and includes them in the API call so Claude avoids similar topics. The system prompt also lists diverse sensory categories (sounds, textures, smells, movement, spaces, people, objects, time, weather) to encourage variety.
